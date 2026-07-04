@@ -1,0 +1,1 @@
+ALTER TABLE links ADD COLUMN qr_generated_at TIMESTAMPTZ;

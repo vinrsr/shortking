@@ -1,0 +1,26 @@
+# Node / pnpm
+node_modules/
+.pnpm-store/
+.turbo/
+
+# Next.js
+apps/web/.next/
+apps/web/out/
+apps/web/.env.local
+
+# Go
+apps/api/bin/
+apps/api/tmp/
+apps/api/.env
+
+# Env files
+*.env
+!*.env.example
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
+
+# Logs
+*.log
