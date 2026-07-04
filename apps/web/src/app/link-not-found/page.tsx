@@ -7,7 +7,7 @@ export default function LinkNotFoundPage() {
     <LinkStatusPage
       icon={SearchX}
       title="Link not found"
-      message="This short link doesn't exist, or has been deactivated by its owner. Double-check the URL, or reach out to whoever shared it with you."
+      message="This short link doesn't exist, or has been deactivated by its owner. Double-check the link or reach out to whoever shared it with you."
     />
   );
 }
