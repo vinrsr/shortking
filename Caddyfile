@@ -1,3 +1,0 @@
-shortking-api.vinrsr.com {
-    reverse_proxy api:8080
-}
