@@ -25,9 +25,8 @@ services:
 
   api:
     build: ./apps/api
-    environment:
-      DATABASE_URL: postgres://shortking:shortking@postgres:5432/shortking?sslmode=disable
-      REDIS_URL: redis://redis:6379
+    env_file:
+      - .env.production
     expose:
       - "8080"
     depends_on:

@@ -15,6 +15,7 @@ apps/api/.env
 
 # Env files
 *.env
+.env.production
 !*.env.example
 
 # OS / editor
