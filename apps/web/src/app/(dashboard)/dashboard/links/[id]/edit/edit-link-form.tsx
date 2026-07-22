@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+import { Spinner } from "@/components/spinner";
 import type { Link as ShortLink } from "@/types/link";
 
 export function EditLinkForm({ link }: { link: ShortLink }) {
@@ -19,27 +20,29 @@ export function EditLinkForm({ link }: { link: ShortLink }) {
     const expiresAt = form.get("expiresAt") as string;
     const maxClicks = form.get("maxClicks") as string;
 
-    const res = await fetch(`/api/links/${link.id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        destination: form.get("destination"),
-        expiresAt: expiresAt ? new Date(expiresAt).toISOString() : undefined,
-        maxClicks: maxClicks ? Number(maxClicks) : undefined,
-        isActive: form.get("isActive") === "on",
-      }),
-    });
+    try {
+      const res = await fetch(`/api/links/${link.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          destination: form.get("destination"),
+          expiresAt: expiresAt ? new Date(expiresAt).toISOString() : undefined,
+          maxClicks: maxClicks ? Number(maxClicks) : undefined,
+          isActive: form.get("isActive") === "on",
+        }),
+      });
 
-    setSubmitting(false);
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setError(data.error ?? "Failed to update link");
+        return;
+      }
 
-    if (!res.ok) {
-      const data = await res.json().catch(() => ({}));
-      setError(data.error ?? "Failed to update link");
-      return;
+      router.push(`/dashboard/links/${link.id}`);
+      router.refresh();
+    } finally {
+      setSubmitting(false);
     }
-
-    router.push(`/dashboard/links/${link.id}`);
-    router.refresh();
   }
 
   return (
@@ -88,8 +91,9 @@ export function EditLinkForm({ link }: { link: ShortLink }) {
       <button
         type="submit"
         disabled={submitting}
-        className="mt-2 rounded-full bg-deep px-4 py-3 font-semibold text-bright transition-transform duration-200 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:hover:scale-100"
+        className="mt-2 inline-flex items-center justify-center gap-2 rounded-full bg-deep px-4 py-3 font-semibold text-bright transition-transform duration-200 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:hover:scale-100"
       >
+        {submitting && <Spinner className="h-4 w-4" />}
         {submitting ? "Saving..." : "Save changes"}
       </button>
     </form>

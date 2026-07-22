@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 
+import { Spinner } from "@/components/spinner";
+
 function ResetPasswordForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -17,21 +19,23 @@ function ResetPasswordForm() {
     setSubmitting(true);
 
     const form = new FormData(e.currentTarget);
-    const res = await fetch("/api/auth/reset-password", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ token, newPassword: form.get("newPassword") }),
-    });
+    try {
+      const res = await fetch("/api/auth/reset-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token, newPassword: form.get("newPassword") }),
+      });
 
-    setSubmitting(false);
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setError(data.error ?? "Failed to reset password");
+        return;
+      }
 
-    if (!res.ok) {
-      const data = await res.json().catch(() => ({}));
-      setError(data.error ?? "Failed to reset password");
-      return;
+      router.push("/login");
+    } finally {
+      setSubmitting(false);
     }
-
-    router.push("/login");
   }
 
   if (!token) {
@@ -60,8 +64,9 @@ function ResetPasswordForm() {
       <button
         type="submit"
         disabled={submitting}
-        className="mt-2 rounded-full bg-deep px-4 py-3 font-semibold text-bright transition-transform duration-200 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:hover:scale-100"
+        className="mt-2 inline-flex items-center justify-center gap-2 rounded-full bg-deep px-4 py-3 font-semibold text-bright transition-transform duration-200 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:hover:scale-100"
       >
+        {submitting && <Spinner className="h-4 w-4" />}
         {submitting ? "Saving..." : "Set new password"}
       </button>
     </form>

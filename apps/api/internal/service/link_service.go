@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/google/uuid"
@@ -18,6 +19,7 @@ var (
 	ErrLinkExpired  = errors.New("service: link expired")
 	ErrAliasTaken   = errors.New("service: alias already in use")
 	ErrForbidden    = errors.New("service: not the owner of this link")
+	ErrInvalidAlias = errors.New("service: invalid alias")
 )
 
 // AnonymousLinkTTL is the fixed, non-configurable expiry for links created
@@ -47,7 +49,7 @@ func (s *LinkService) Create(ctx context.Context, in CreateLinkInput) (*models.L
 	code := in.CustomAlias
 	if code != "" {
 		if err := shortcode.ValidateAlias(code); err != nil {
-			return nil, err
+			return nil, fmt.Errorf("%w: %v", ErrInvalidAlias, err)
 		}
 		return s.createWithCode(ctx, in, code)
 	}

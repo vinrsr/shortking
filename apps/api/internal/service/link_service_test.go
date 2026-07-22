@@ -51,7 +51,7 @@ func TestCreate_InvalidCustomAliasIsRejected(t *testing.T) {
 		CustomAlias: "a", // shorter than shortcode.MinAliasLen
 	})
 
-	assert.Error(t, err)
+	assert.ErrorIs(t, err, ErrInvalidAlias)
 	assert.NotErrorIs(t, err, ErrAliasTaken) // format error, not a conflict
 }
 

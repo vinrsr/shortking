@@ -59,22 +59,24 @@ export function ShortenForm() {
       });
     }
 
-    const res = await fetch("/api/shorten", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ destination: url }),
-    });
+    try {
+      const res = await fetch("/api/shorten", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ destination: url }),
+      });
 
-    setSubmitting(false);
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setError(data.error ?? "Failed to shorten link");
+        setLimitReached(res.status === 429);
+        return;
+      }
 
-    if (!res.ok) {
-      const data = await res.json().catch(() => ({}));
-      setError(data.error ?? "Failed to shorten link");
-      setLimitReached(res.status === 429);
-      return;
+      setResult(await res.json());
+    } finally {
+      setSubmitting(false);
     }
-
-    setResult(await res.json());
   }
 
   if (result) {

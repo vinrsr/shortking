@@ -1,14 +1,21 @@
 "use client";
 
 import { LayoutDashboard, Link2, QrCode } from "lucide-react";
-import Link from "next/link";
+import Link, { useLinkStatus } from "next/link";
 import { usePathname } from "next/navigation";
+
+import { Spinner } from "@/components/spinner";
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { href: "/dashboard/links", label: "Links", icon: Link2, exact: false },
   { href: "/dashboard/qr", label: "QR Codes", icon: QrCode, exact: false },
 ];
+
+function NavPendingIndicator() {
+  const { pending } = useLinkStatus();
+  return pending ? <Spinner className="ml-auto h-4 w-4" /> : null;
+}
 
 export function SidebarNav() {
   const pathname = usePathname();
@@ -30,6 +37,7 @@ export function SidebarNav() {
           >
             <item.icon className="h-5 w-5" />
             {item.label}
+            <NavPendingIndicator />
           </Link>
         );
       })}

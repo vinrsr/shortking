@@ -218,6 +218,24 @@ func TestLinks_CreateBlockedUntilEmailVerified(t *testing.T) {
 	assert.Equal(t, http.StatusCreated, allowedRec.Code, allowedRec.Body.String())
 }
 
+func TestLinks_CreateRejectsAliasBelowMinimumLength(t *testing.T) {
+	api := newTestAPI(t)
+	_, accessToken := api.signup(t, "hank@example.com", "hunter2pass", "Hank")
+	api.verifyEmail(t, "hank@example.com")
+
+	rec := api.do(t, http.MethodPost, "/api/v1/links", map[string]any{
+		"destination": "https://example.com",
+		"customAlias": "ab",
+	}, accessToken)
+
+	require.Equal(t, http.StatusBadRequest, rec.Code, rec.Body.String())
+	var body struct {
+		Error string `json:"error"`
+	}
+	require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &body))
+	assert.Contains(t, body.Error, "alias must be between")
+}
+
 func TestLinks_CannotDeleteAnotherUsersLink(t *testing.T) {
 	api := newTestAPI(t)
 	_, ownerToken := api.signup(t, "owner@example.com", "hunter2pass", "Owner")

@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 
+import { Spinner } from "@/components/spinner";
+
 export function QrCodeReveal({
   linkId,
   shortCode,
@@ -12,17 +14,27 @@ export function QrCodeReveal({
   generated?: boolean;
 }) {
   const [show, setShow] = useState(generated);
+  const [generating, setGenerating] = useState(false);
+
+  async function handleGenerate() {
+    setGenerating(true);
+    try {
+      await fetch(`/api/links/${linkId}/qrcode/generations`, { method: "POST" });
+      setShow(true);
+    } finally {
+      setGenerating(false);
+    }
+  }
 
   if (!show) {
     return (
       <button
-        onClick={() => {
-          setShow(true);
-          fetch(`/api/links/${linkId}/qrcode/generations`, { method: "POST" }).catch(() => {});
-        }}
-        className="w-fit rounded-full bg-deep px-4 py-2 text-sm font-semibold text-bright transition-transform duration-200 hover:scale-105 active:scale-95"
+        onClick={handleGenerate}
+        disabled={generating}
+        className="inline-flex w-fit items-center justify-center gap-2 rounded-full bg-deep px-4 py-2 text-sm font-semibold text-bright transition-transform duration-200 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:hover:scale-100"
       >
-        Generate QR code
+        {generating && <Spinner className="h-4 w-4" />}
+        {generating ? "Generating..." : "Generate QR code"}
       </button>
     );
   }
