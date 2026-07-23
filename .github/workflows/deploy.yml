@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'apps/api/**'
+      - 'docker-compose.prod.yml'
+      - '.github/workflows/deploy.yml'
 
 jobs:
   deploy:
@@ -19,5 +23,4 @@ jobs:
           script: |
             cd ~/shortking
             git pull origin main
-            docker builder prune -af
             docker compose -f docker-compose.prod.yml up -d --build

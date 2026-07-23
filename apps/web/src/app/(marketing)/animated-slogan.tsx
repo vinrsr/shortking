@@ -7,7 +7,7 @@ const SLOGANS = [
   "Doesn't matter if she's taller. Your links should be shorter",
   "We shorten links. Not your confidence",
   "No cap, your links are way too long",
-  "Short king energy. Tiny links. Massive aura",
+  "Short king energy. Tiny links. Massive aura.",
   "If your link wraps to the next line, we need to talk",
   "Your link has more characters than your group chat",
   "She's taller. Your links aren't",
