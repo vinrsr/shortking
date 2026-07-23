@@ -3,7 +3,6 @@
 import { gsap } from "gsap";
 import { useEffect, useRef, useState } from "react";
 
-//TODO: make these slogans more funnier
 const SLOGANS = [
   "Doesn't matter if she's taller. Your links should be shorter",
   "We shorten links. Not your confidence",
